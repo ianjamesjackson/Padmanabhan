@@ -1,0 +1,34 @@
+//begin with insulin+ 'I.tif' image open
+
+selectWindow("I.tif");
+//select insulin+ image
+
+waitForUser("Set Threshold");
+//user sets threshold for insulin+ stain
+
+run("Convert to Mask");
+//convert selected threshold to mask
+
+run("Analyze Particles...","size=0-infinity pixel circularity=0.00-1.00 show=Outlines clear summarize");
+//calculates the total insulin+ area
+
+selectWindow("I.tif");
+//select insulin+ image
+
+run("Invert");
+//inverts polarity image
+
+run("Watershed");
+//eliminates artifacts and generates boundary conditions for cells
+
+run("Analyze Particles...","size=100-800 pixel circularity=0.60-1.00 show=Outlines exclude clear summarize");
+//selects all beta cells and displays the total number
+
+selectWindow("I.tif");
+//select insulin+ image
+
+close();
+//closes image
+
+selectWindow("Summary");
+//displays a summary of data collected by program

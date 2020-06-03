@@ -1,0 +1,81 @@
+//begin with insulin+ image 'I.tif', glucagon+ image 'G.tif' or somatostatin+ image 'S.tif', and DAPI+ image (D.tif)
+
+selectWindow("I.tif");
+//select insulin+ image
+
+run("Duplicate...", " ");
+//duplicate insulin+ image
+
+selectWindow("D.tif");
+//select DAPI+ window
+
+run("Duplicate...", " ");
+//duplicate DAPI+ window
+
+run("Merge Channels...", "c1=I-1.tif c2=G.tif c3=D-1.tif create");
+//create a merge image of insulin+, glucagon+, and DAPI+
+//the same was done for somatostatin+ images, replacing 'G.tif' with 'S.tif'
+
+waitForUser("Select ROI");
+//user outlines islet
+
+close();
+//merged image is closed
+
+selectWindow("D.tif");
+//select DAPI+ window
+
+
+run("Restore Selection");
+//creates an identical outline to the one previously made
+
+run("Clear Outside");
+//clear all pixels outside of the islet selection area
+
+waitForUser("Set Threshold");
+//user sets threshold for DAPI+ stain
+
+run("Convert to Mask");
+//threshold selection becomes a mask
+
+run("Watershed");
+//removes artifacts from mask and creates boundaries for cells
+
+run("Analyze Particles...","size=100-800 pixel circularity=0.6-1.00 show=Outlines exclude clear summarize");
+//selects all individual cells and displays the total cell count of islet
+
+selectWindow("D.tif");
+//select DAPI+ window
+
+close();
+//close DAPI+ window
+
+selectWindow("I.tif");
+//select insulin+ window
+
+run("Restore Selection");
+//creates an identical outline to the one previously made
+
+run("Clear Outside");
+//clears all pixels outside of selected outline
+
+waitForUser("Set Threshold");
+//user sets threshold for insulin+ stain
+
+run("Convert to Mask");
+//threshold selection becomes a mask
+
+run("Invert");
+//inverts the polarity of the image
+
+run("Watershed");
+//removes artifacts from mask and creates boundaries for cells
+
+run("Analyze Particles...","size=100-800 pixel circularity=0.6-1.00 show=Outlines exclude clear summarize");
+//identifies individual beta cells within islet area
+
+selectWindow("I.tif");
+//select insulin+ window
+
+close();
+//close insulin+ window
